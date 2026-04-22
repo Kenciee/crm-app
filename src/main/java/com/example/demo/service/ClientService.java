@@ -4,46 +4,39 @@ import com.example.demo.model.Client;
 import com.example.demo.dto.ClientRequest;
 import com.example.demo.dto.ClientResponse;
 import com.example.demo.mapper.ClientMapper;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.*;
+import com.example.demo.repository.ClientRepository;
 import org.springframework.stereotype.Service;
+import java.util.List;
 
 @Service
 public class ClientService {
-    private List<Client> clients = new ArrayList<>();
-    private int idCounter = 1;
+    private final ClientRepository repository;
+
+    public ClientService(ClientRepository repository) {
+        this.repository = repository;
+    }
 
     public void addClient(ClientRequest request) {
 
 
-        Client client = new Client(idCounter++, request.getName(), request.getEmail());
-        clients.add(client);
+        Client client = new Client(request.getName(), request.getEmail());
+        repository.save(client);
     }
 
     public List<ClientResponse> getAllClients() {
-
-        List<ClientResponse> result = new ArrayList<>();
-
-        for (Client c : clients) {
-            result.add(ClientMapper.toResponse(c));
-        }
-
-        return result;
+        return repository.findAll()
+                .stream()
+                .map(ClientMapper::toResponse)
+                .toList();
 
     }
-
-    private Client findEntityById(int id) {
-        for (Client c : clients) {
-            if (c.getId() == id) {
-                return c;
-            }
-        }
-        throw new RuntimeException("Клиент не найден");
+    public ClientResponse findById(Long id) {
+        Client client = repository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Клиент не найден"));
+        return ClientMapper.toResponse(client);
     }
-    public ClientResponse findById(int id) {
-        Client c = findEntityById(id);
-        return ClientMapper.toResponse(c);
+    public void delete(Long id) {
+        repository.deleteById(id);
     }
 }
 

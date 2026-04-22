@@ -1,17 +1,25 @@
 package com.example.demo.model;
 
+import jakarta.persistence.*;
+
+@Entity
+@Table(name = "clients")
 public class Client {
-    private int id;
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
     private String name;
     private String email;
 
-    public Client(int id,String name,String email){
-        this.id = id;
+    public Client(){}
+
+    public Client(String name,String email){
         this.name = name;
         this.email = email;
     }
 
-    public int getId(){ return id; }
+    public Long getId(){ return id; }
     public String getName(){ return name; }
     public String getEmail(){ return email; }
 

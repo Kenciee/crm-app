@@ -26,7 +26,12 @@ public class ClientController {
     }
 
     @GetMapping("/{id}")
-    public ClientResponse getById(@PathVariable int id) {
+    public ClientResponse getById(@PathVariable Long id) {
         return service.findById(id);
+    }
+    @DeleteMapping("/{id}")
+    public String delete(@PathVariable Long id) {
+        service.delete(id);
+        return "Удалено";
     }
 }
